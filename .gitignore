@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+# Ne jamais versionner les exports Sage (données clients)
+*.pnm
+*.pnc
+donnees/
