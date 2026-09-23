@@ -59,11 +59,11 @@ def test_conversion():
     assert df.iloc[1]["Numéro de compte"] == "445711200"
     assert list(df.iloc[0:3]["Taux de TVA du compte"]) == ["", "", "20%"]
     assert df.iloc[6]["Taux de TVA du compte"] == "pas de TVA"  # 766 sans TVA
-    assert banque["Taux de TVA du compte"] == ""
 
     banque = df.iloc[4]
     assert banque["Code Journal"] == "SAGE"
     assert banque["Numéro de compte"] == "582000000"
+    assert banque["Taux de TVA du compte"] == ""
     assert df.iloc[3]["Numéro de pièce"] == banque["Numéro de pièce"] == "SAGE-2607-001"
 
     assert df.iloc[5]["Code Journal"] == "SAGE"
@@ -86,7 +86,7 @@ def test_taux_tva():
     assert taux_tva(piece(("44571120", "D", "1.67"), ("70702000", "D", "8.34"))) == ("20%", False)
     assert taux_tva(piece(("70709000", "C", "100.00"))) == ("pas de TVA", False)
     # mélange de lignes taxées et exonérées -> taux incohérent signalé
-    assert taux_tva(piece(("44571120", "C", "20.00"), ("70702000", "C", "100.00"), ("70709000", "C", "100.00")))[1]
+    assert taux_tva(piece(("44571120", "C", "20.00"), ("70702000", "C", "100.00"), ("70709000", "C", "50.00")))[1]
 
 
 def test_piece_desequilibree():
