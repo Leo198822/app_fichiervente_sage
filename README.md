@@ -15,7 +15,7 @@ Toutes les règles sont dans [`config.py`](config.py) :
 
 | Sage | Pennylane |
 |---|---|
-| Compte client `41100000` + code client `3184` | `411003184` (`41100` + code client) |
+| Compte client `41100000` + code client `0385` | `411038500` (`411` + code client + `00`) |
 | Journal `VTE` / `VE` | `VT` |
 | Journaux `BQ1`, `BQ3`…, `CAI`, `OD` | `SAGE` |
 | Comptes `512…` | `582000000` |

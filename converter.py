@@ -201,7 +201,7 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
         for e in piece:
             code_client = e["code_client"]
             if e["type_compte"] == "X" and code_client:
-                compte = config.PREFIXE_COMPTE_CLIENT + code_client
+                compte = (config.PREFIXE_COMPTE_CLIENT + code_client).ljust(config.LONGUEUR_COMPTE or 0, "0")
                 if code_client in clients:
                     libelle_compte = clients[code_client]["nom"]
                 else:

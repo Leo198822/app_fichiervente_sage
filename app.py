@@ -18,7 +18,7 @@ st.write(
 with st.sidebar:
     st.header("Règles appliquées")
     st.markdown(
-        f"- Compte client : `{config.PREFIXE_COMPTE_CLIENT}` + code client\n"
+        f"- Compte client : `{config.PREFIXE_COMPTE_CLIENT}` + code client + `00`\n"
         + "".join(f"- Journal `{k}…` → `{v}`\n" for k, v in config.JOURNAUX.items())
         + "".join(f"- Comptes `{k}…` → `{v}`\n" for k, v in config.COMPTES_REMPLACES.items())
         + (f"- Comptes généraux complétés à {config.LONGUEUR_COMPTE} chiffres\n" if config.LONGUEUR_COMPTE else "")

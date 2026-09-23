@@ -7,8 +7,9 @@ la conversion sans toucher au reste du code.
 # Encodage des exports Sage (format DOS)
 ENCODAGE_SAGE = "cp850"
 
-# Compte client Pennylane = PREFIXE_COMPTE_CLIENT + code client (ex. 3184 -> 411003184)
-PREFIXE_COMPTE_CLIENT = "41100"
+# Compte client Pennylane = PREFIXE_COMPTE_CLIENT + code client, complété par des 0
+# à droite jusqu'à LONGUEUR_COMPTE (ex. 0385 -> 411038500, 3184 -> 411318400)
+PREFIXE_COMPTE_CLIENT = "411"
 
 # Longueur des numéros de compte généraux (complétés par des 0 à droite).
 # Mettre None pour conserver les numéros Sage tels quels.

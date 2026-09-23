@@ -48,7 +48,7 @@ def test_conversion():
 
     vente = df.iloc[0]
     assert vente["Code Journal"] == "VT"
-    assert vente["Numéro de compte"] == "411003184"
+    assert vente["Numéro de compte"] == "411318400"
     assert vente["Libellé de compte"] == "Anne-Laure Taillefer"
     assert vente["Code pays du compte"] == ""
     assert vente["Numéro de pièce"] == "FA2600304"
@@ -103,5 +103,5 @@ def test_export_excel():
     df = convertir(ECRITURES, CLIENTS).ecritures
     ws = load_workbook(io.BytesIO(vers_excel(df))).active
     assert [c.value for c in ws[1]] == COLONNES_PENNYLANE
-    assert ws["C2"].value == "411003184"
+    assert ws["C2"].value == "411318400"
     assert ws["A2"].number_format == "yyyy-mm-dd"
