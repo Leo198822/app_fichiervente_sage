@@ -33,6 +33,8 @@ ECRITURES = "\r\n".join([
     ligne_ecriture("BQ1", "030726", "51211000", "D", "252.90", "0555211"),
     ligne_ecriture("OD ", "030726", "41100000", "D", "12.58", "Ecart", "9999"),
     ligne_ecriture("OD ", "030726", "76600000", "C", "12.58", "Ecart"),
+    ligne_ecriture("CAI", "030726", "41100000", "D", "10.01", "remboursement", "3103"),
+    ligne_ecriture("CAI", "310726", "53110000", "C", "10.01", "Centralisation"),
     "",
 ]).encode("cp850")
 
@@ -41,16 +43,18 @@ def test_conversion():
     r = convertir(ECRITURES, CLIENTS)
     df = r.ecritures
     assert list(df.columns) == COLONNES_PENNYLANE
-    assert len(df) == 7
-    assert r.nb_pieces == 3
+    assert len(df) == 9
+    assert r.nb_pieces == 4
 
     vente = df.iloc[0]
     assert vente["Code Journal"] == "VT"
     assert vente["Numéro de compte"] == "411003184"
     assert vente["Libellé de compte"] == "Anne-Laure Taillefer"
-    assert vente["Code pays du compte"] == "FR"
+    assert vente["Code pays du compte"] == ""
     assert vente["Numéro de pièce"] == "FA2600304"
-    assert vente["Libellé de ligne"] == "Facture n° FA2600304 Anne"
+    # toutes les lignes de la pièce portent le nom du client
+    assert set(df.iloc[0:3]["Libellé de ligne"]) == {"Anne-Laure Taillefer"}
+    assert set(df.iloc[0:3]["Libellé de pièce"]) == {"Anne-Laure Taillefer"}
     assert vente["Débit et/ou Crédit"] == 252.90 and vente["Crédit"] == 0
     assert df.iloc[1]["Numéro de compte"] == "445711200"
 
@@ -59,8 +63,13 @@ def test_conversion():
     assert banque["Numéro de compte"] == "582000000"
     assert df.iloc[3]["Numéro de pièce"] == banque["Numéro de pièce"] == "SAGE-2607-001"
 
-    assert df.iloc[5]["Code Journal"] == "OD"
-    assert r.alertes == ["Code client 9999 absent du fichier clients (libellé de compte = code)"]
+    assert df.iloc[5]["Code Journal"] == "SAGE"
+    assert df.iloc[5]["Numéro de pièce"] == "SAGE-2607-002"
+    assert df.iloc[6]["Libellé de ligne"] == "9999"
+    assert r.alertes == ["Code client 9999 absent du fichier clients (le code est utilisé comme libellé)"]
+    caisse = df.iloc[8]
+    assert (caisse["Code Journal"], caisse["Numéro de compte"]) == ("SAGE", "531")
+    assert caisse["Libellé de ligne"] == "Timea Griset"
     assert df["Débit et/ou Crédit"].sum() == df["Crédit"].sum()
 
 

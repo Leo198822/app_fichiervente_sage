@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 
 import pandas as pd
-import pycountry
 from openpyxl import Workbook
 from openpyxl.styles import Font
 
@@ -83,13 +82,6 @@ def _extraire(ligne: str, champs: dict[str, tuple[int, int]]) -> dict[str, str]:
     # Sage échappe certains caractères (ex. "\#") ce qui décale les colonnes
     ligne = RE_ECHAPPEMENT.sub(r"\1", ligne)
     return {nom: ligne[d:f].strip() for nom, (d, f) in champs.items()}
-
-
-def pays_iso2(code: str) -> str:
-    if not code:
-        return ""
-    pays = pycountry.countries.get(alpha_3=code.upper())
-    return pays.alpha_2 if pays else code
 
 
 def lire_clients(contenu: bytes | str) -> dict[str, dict[str, str]]:
@@ -179,21 +171,23 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
                 f"déséquilibrée : débit {debit:.2f} / crédit {credit:.2f}"
             )
 
+        # Nom du client de la pièce : sert de libellé de ligne et de pièce pour toutes ses lignes
+        code_piece = next((e["code_client"] for e in piece if e["type_compte"] == "X" and e["code_client"]), None)
+        nom_piece = clients[code_piece]["nom"] if code_piece in clients else code_piece
+
         for e in piece:
             code_client = e["code_client"]
-            pays = ""
             if e["type_compte"] == "X" and code_client:
                 compte = config.PREFIXE_COMPTE_CLIENT + code_client
-                client = clients.get(code_client)
-                if client:
-                    libelle_compte = client["nom"]
-                    pays = pays_iso2(client["pays"])
+                if code_client in clients:
+                    libelle_compte = clients[code_client]["nom"]
                 else:
                     libelle_compte = code_client
                     clients_inconnus.add(code_client)
             else:
                 compte = convertir_compte(e["compte"])
                 libelle_compte = _par_prefixe(compte, config.LIBELLES_COMPTES) or ""
+            libelle = nom_piece or e["libelle"]
 
             montant = _montant(e["montant"])
             lignes.append({
@@ -201,10 +195,10 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
                 "Code Journal": journal,
                 "Numéro de compte": compte,
                 "Libellé de compte": libelle_compte,
-                "Libellé de ligne": e["libelle"],
+                "Libellé de ligne": libelle,
                 "Taux de TVA du compte": "",
-                "Code pays du compte": pays,
-                "Libellé de pièce": piece[0]["libelle"],
+                "Code pays du compte": "",
+                "Libellé de pièce": libelle,
                 "Numéro de pièce": numero,
                 "Débit et/ou Crédit": montant if e["sens"] == "D" else 0.0,
                 "Crédit": montant if e["sens"] == "C" else 0.0,
@@ -215,7 +209,7 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
             })
 
     for code in sorted(clients_inconnus):
-        alertes.append(f"Code client {code} absent du fichier clients (libellé de compte = code)")
+        alertes.append(f"Code client {code} absent du fichier clients (le code est utilisé comme libellé)")
 
     df = pd.DataFrame(lignes, columns=COLONNES_PENNYLANE)
     return Resultat(ecritures=df, alertes=alertes, nb_pieces=len(pieces))

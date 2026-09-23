@@ -20,11 +20,14 @@ JOURNAUX = {
     "VTE": "VT",   # journal de ventes
     "VE": "VT",
     "BQ": "SAGE",  # BQ1, BQ3... -> SAGE
+    "CAI": "SAGE",
+    "OD": "SAGE",
 }
 
 # Remplacement de comptes généraux (préfixe du compte Sage -> compte Pennylane).
 COMPTES_REMPLACES = {
     "512": "582000000",
+    "5311": "531",
 }
 
 # Libellés des comptes généraux (préfixe du compte -> libellé).

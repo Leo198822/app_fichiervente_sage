@@ -17,13 +17,16 @@ Toutes les règles sont dans [`config.py`](config.py) :
 |---|---|
 | Compte client `41100000` + code client `3184` | `411003184` (`41100` + code client) |
 | Journal `VTE` / `VE` | `VT` |
-| Journaux `BQ1`, `BQ3`… | `SAGE` |
+| Journaux `BQ1`, `BQ3`…, `CAI`, `OD` | `SAGE` |
 | Comptes `512…` | `582000000` |
+| Compte `5311…` | `531` |
 | Autres comptes généraux (`44571120`) | complétés à 9 chiffres (`445711200`) |
-| Pays du client (`FRA`) | code ISO à 2 lettres (`FR`) |
 
-- **Libellé de compte** : nom du client (issu du fichier clients) pour les comptes clients,
+- **Libellé de ligne** et **libellé de pièce** : nom du client concerné par la pièce
+  (issu du fichier clients), sur toutes les lignes de la pièce.
+- **Libellé de compte** : nom du client pour les comptes clients,
   libellé par défaut selon la racine du compte pour les autres.
+- **Code pays** : laissé vide.
 - **Numéro de pièce** : numéro de facture (`FA…` / `FR…`) quand il figure dans le libellé,
   sinon `JOURNAL-AAMM-nnn`. Les lignes d'une pièce sont regroupées jusqu'à équilibre débit = crédit.
 - L'application signale les pièces déséquilibrées et les codes clients introuvables.
