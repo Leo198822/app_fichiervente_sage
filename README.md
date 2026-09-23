@@ -19,7 +19,7 @@ Toutes les règles sont dans [`config.py`](config.py) :
 | Journal `VTE` / `VE` | `VT` |
 | Journaux `BQ1`, `BQ3`…, `CAI`, `OD` | `SAGE` |
 | Comptes `512…` | `582000000` |
-| Compte `5311…` | `531` |
+| Compte `5311…` | `531000000` |
 | Compte `44571120` | `445710000` |
 | Autres comptes généraux (`70702000`) | complétés à 9 chiffres (`707020000`) |
 

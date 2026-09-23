@@ -27,7 +27,7 @@ JOURNAUX = {
 # Remplacement de comptes généraux (préfixe du compte Sage -> compte Pennylane).
 COMPTES_REMPLACES = {
     "512": "582000000",
-    "5311": "531",
+    "5311": "531000000",
     "44571120": "445710000",
 }
 

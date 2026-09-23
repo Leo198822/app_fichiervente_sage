@@ -71,7 +71,7 @@ def test_conversion():
     assert df.iloc[6]["Libellé de ligne"] == "9999"
     assert r.alertes == ["Code client 9999 absent du fichier clients (le code est utilisé comme libellé)"]
     caisse = df.iloc[8]
-    assert (caisse["Code Journal"], caisse["Numéro de compte"]) == ("SAGE", "531")
+    assert (caisse["Code Journal"], caisse["Numéro de compte"]) == ("SAGE", "531000000")
     assert caisse["Libellé de ligne"] == "Timea Griset"
     assert df["Débit et/ou Crédit"].sum() == df["Crédit"].sum()
 
