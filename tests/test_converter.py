@@ -57,7 +57,7 @@ def test_conversion():
     assert set(df.iloc[0:3]["Libellé de pièce"]) == {"Anne-Laure Taillefer"}
     assert vente["Débit et/ou Crédit"] == 252.90 and vente["Crédit"] == 0
     assert df.iloc[1]["Numéro de compte"] == "445711200"
-    assert list(df.iloc[0:3]["Taux de TVA du compte"]) == ["", "", "20%"]
+    assert list(df.iloc[0:3]["Taux de TVA du compte"]) == ["", "", "20\u00a0%"]
     assert df.iloc[6]["Taux de TVA du compte"] == "pas de TVA"  # 766 sans TVA
 
     banque = df.iloc[4]
@@ -80,10 +80,10 @@ def test_taux_tva():
     def piece(*lignes):
         return [{"compte": c, "sens": sens, "montant": m} for c, sens, m in lignes]
 
-    assert taux_tva(piece(("44571120", "C", "10.00"), ("70702000", "C", "100.00"))) == ("10%", False)
-    assert taux_tva(piece(("44571120", "C", "5.50"), ("70702000", "C", "100.00"))) == ("5,5%", False)
+    assert taux_tva(piece(("44571120", "C", "10.00"), ("70702000", "C", "100.00"))) == ("10\u00a0%", False)
+    assert taux_tva(piece(("44571120", "C", "5.50"), ("70702000", "C", "100.00"))) == ("5,5\u00a0%", False)
     # avoir : TVA et HT au débit
-    assert taux_tva(piece(("44571120", "D", "1.67"), ("70702000", "D", "8.34"))) == ("20%", False)
+    assert taux_tva(piece(("44571120", "D", "1.67"), ("70702000", "D", "8.34"))) == ("20\u00a0%", False)
     assert taux_tva(piece(("70709000", "C", "100.00"))) == ("pas de TVA", False)
     # mélange de lignes taxées et exonérées -> taux incohérent signalé
     assert taux_tva(piece(("44571120", "C", "20.00"), ("70702000", "C", "100.00"), ("70709000", "C", "50.00")))[1]

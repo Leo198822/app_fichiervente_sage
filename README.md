@@ -29,7 +29,7 @@ Toutes les règles sont dans [`config.py`](config.py) :
 - **Code pays** : laissé vide.
 - **Taux de TVA** : calculé pour chaque pièce (TVA collectée / montant HT, arrondi au taux légal
   le plus proche) et indiqué sur les lignes de produits et de charges (classes 6 et 7) :
-  `20%`, `10%`, `5,5%`… ou `pas de TVA`. Un taux incohérent (pièce mêlant plusieurs taux) est signalé.
+  `20 %`, `10 %`, `5,5 %`… ou `pas de TVA`. Un taux incohérent (pièce mêlant plusieurs taux) est signalé.
 - **Numéro de pièce** : numéro de facture (`FA…` / `FR…`) quand il figure dans le libellé,
   sinon `JOURNAL-AAMM-nnn`. Les lignes d'une pièce sont regroupées jusqu'à équilibre débit = crédit.
 - L'application signale les pièces déséquilibrées et les codes clients introuvables.

@@ -140,7 +140,8 @@ def taux_tva(piece: list[dict[str, str]]) -> tuple[str, bool]:
         return "", True
     calcule = tva / ht * 100
     taux = min(config.TAUX_TVA, key=lambda t: abs(t - calcule))
-    return f"{taux:g}%".replace(".", ","), abs(taux - calcule) > 0.5
+    # espace insécable avant "%", comme dans la trame Pennylane ("20 %")
+    return f"{taux:g}\u00a0%".replace(".", ","), abs(taux - calcule) > 0.5
 
 
 def _decouper_pieces(ecritures: list[dict[str, str]]) -> list[list[dict[str, str]]]:
