@@ -46,3 +46,10 @@ LIBELLES_COMPTES = {
     "758": "Produits divers de gestion courante",
     "766": "Gains de change",
 }
+
+# Taux de TVA : calculé pour chaque pièce (TVA collectée / montant HT) puis arrondi
+# au taux légal le plus proche. Il est indiqué sur les lignes de produits et de charges.
+TAUX_TVA = [20, 10, 5.5, 2.1]
+COMPTES_TVA_COLLECTEE = ("4457",)
+COMPTES_SOUMIS_TVA = ("6", "7")
+LIBELLE_SANS_TVA = "pas de TVA"

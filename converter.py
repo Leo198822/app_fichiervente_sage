@@ -125,6 +125,24 @@ def _montant(texte: str) -> float:
     return round(float(texte.replace(",", ".") or 0), 2)
 
 
+def _signe(e: dict[str, str]) -> float:
+    """Montant signé côté crédit (produits et TVA collectée positifs)."""
+    return _montant(e["montant"]) * (1 if e["sens"] == "C" else -1)
+
+
+def taux_tva(piece: list[dict[str, str]]) -> tuple[str, bool]:
+    """Taux de TVA de la pièce (ex. "20%", "pas de TVA") et indicateur de taux incohérent."""
+    tva = sum(_signe(e) for e in piece if e["compte"].startswith(config.COMPTES_TVA_COLLECTEE))
+    ht = sum(_signe(e) for e in piece if e["compte"].startswith(config.COMPTES_SOUMIS_TVA))
+    if abs(tva) < 0.005:
+        return config.LIBELLE_SANS_TVA, False
+    if abs(ht) < 0.005:
+        return "", True
+    calcule = tva / ht * 100
+    taux = min(config.TAUX_TVA, key=lambda t: abs(t - calcule))
+    return f"{taux:g}%".replace(".", ","), abs(taux - calcule) > 0.5
+
+
 def _decouper_pieces(ecritures: list[dict[str, str]]) -> list[list[dict[str, str]]]:
     """Regroupe les lignes consécutives d'un même journal jusqu'à équilibre débit = crédit."""
     pieces, courante, solde = [], [], 0.0
@@ -171,6 +189,10 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
                 f"déséquilibrée : débit {debit:.2f} / crédit {credit:.2f}"
             )
 
+        taux, taux_incoherent = taux_tva(piece)
+        if taux_incoherent:
+            alertes.append(f"Pièce {numero} : taux de TVA incohérent ({taux or 'HT nul'}), à vérifier")
+
         # Nom du client de la pièce : sert de libellé de ligne et de pièce pour toutes ses lignes
         code_piece = next((e["code_client"] for e in piece if e["type_compte"] == "X" and e["code_client"]), None)
         nom_piece = clients[code_piece]["nom"] if code_piece in clients else code_piece
@@ -196,7 +218,7 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
                 "Numéro de compte": compte,
                 "Libellé de compte": libelle_compte,
                 "Libellé de ligne": libelle,
-                "Taux de TVA du compte": "",
+                "Taux de TVA du compte": taux if e["compte"].startswith(config.COMPTES_SOUMIS_TVA) else "",
                 "Code pays du compte": "",
                 "Libellé de pièce": libelle,
                 "Numéro de pièce": numero,
