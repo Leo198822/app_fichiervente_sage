@@ -28,6 +28,7 @@ JOURNAUX = {
 COMPTES_REMPLACES = {
     "512": "582000000",
     "5311": "531",
+    "44571120": "445710000",
 }
 
 # Libellés des comptes généraux (préfixe du compte -> libellé).

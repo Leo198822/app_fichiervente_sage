@@ -20,7 +20,8 @@ Toutes les règles sont dans [`config.py`](config.py) :
 | Journaux `BQ1`, `BQ3`…, `CAI`, `OD` | `SAGE` |
 | Comptes `512…` | `582000000` |
 | Compte `5311…` | `531` |
-| Autres comptes généraux (`44571120`) | complétés à 9 chiffres (`445711200`) |
+| Compte `44571120` | `445710000` |
+| Autres comptes généraux (`70702000`) | complétés à 9 chiffres (`707020000`) |
 
 - **Libellé de ligne** et **libellé de pièce** : nom du client concerné par la pièce
   (issu du fichier clients), sur toutes les lignes de la pièce.

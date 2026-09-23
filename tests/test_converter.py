@@ -56,7 +56,7 @@ def test_conversion():
     assert set(df.iloc[0:3]["Libellé de ligne"]) == {"Anne-Laure Taillefer"}
     assert set(df.iloc[0:3]["Libellé de pièce"]) == {"Anne-Laure Taillefer"}
     assert vente["Débit et/ou Crédit"] == 252.90 and vente["Crédit"] == 0
-    assert df.iloc[1]["Numéro de compte"] == "445711200"
+    assert df.iloc[1]["Numéro de compte"] == "445710000"
     assert list(df.iloc[0:3]["Taux de TVA du compte"]) == ["", "", "20\u00a0%"]
     assert df.iloc[6]["Taux de TVA du compte"] == "pas de TVA"  # 766 sans TVA
 
