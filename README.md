@@ -58,7 +58,7 @@ F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
 - **Pièces** : lignes de même journal, n° de pièce (colonne C) et date. Sans n° de pièce (journal AC),
   lignes consécutives regroupées jusqu'à équilibre, avec un numéro généré `HA-AAMM-nnn`.
 - **Taux de TVA** : TVA (`4456` / `4457`) ÷ base HT (comptes 6, 7 et débours soumis à TVA `46711…`),
-  indiqué sur les lignes de la base HT.
+  indiqué uniquement sur les comptes 6 et 7 (Pennylane refuse un taux sur les comptes 467).
 
 ## Lancer en local
 

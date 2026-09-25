@@ -87,3 +87,5 @@ SEPTEO_CODE_DOSSIER = r"^[A-Z]?\d{6}\s*"
 SEPTEO_COMPTES_TVA = ("4456", "4457")
 # Comptes formant la base HT : produits, charges et débours soumis à TVA (46711…)
 SEPTEO_COMPTES_SOUMIS_TVA = ("6", "7", "46711")
+# Comptes sur lesquels le taux est indiqué (Pennylane refuse un taux sur les comptes 467)
+SEPTEO_COMPTES_AVEC_TAUX = ("6", "7")

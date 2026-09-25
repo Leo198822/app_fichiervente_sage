@@ -72,7 +72,8 @@ def test_format_reel_csv():
     df = r.ecritures
     assert r.alertes == []
     assert r.nb_pieces == 6
-    assert list(df.iloc[0:4]["Taux de TVA du compte"]) == ["20\u00a0%", "20\u00a0%", "", ""]
+    # débours 46711 inclus dans la base HT, mais sans taux affiché (refusé par Pennylane)
+    assert list(df.iloc[0:4]["Taux de TVA du compte"]) == ["20\u00a0%", "", "", ""]
     assert df.iloc[4]["Numéro de compte"] == "4110007906"
     assert list(df.iloc[9:13]["Numéro de pièce"]) == ["HA-2607-001"] * 2 + ["HA-2607-002"] * 2
     assert df.iloc[9]["Libellé de compte"] == "DROIT DE PLAIDOIRIE - CNBF"

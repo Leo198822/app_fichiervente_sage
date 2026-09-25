@@ -146,7 +146,7 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
                 "Numéro de compte": compte,
                 "Libellé de compte": libelle_compte(e["libelle"]),
                 "Libellé de ligne": e["libelle"],
-                "Taux de TVA du compte": taux if e["compte"].startswith(config.SEPTEO_COMPTES_SOUMIS_TVA) else "",
+                "Taux de TVA du compte": taux if e["compte"].startswith(config.SEPTEO_COMPTES_AVEC_TAUX) else "",
                 "Code pays du compte": "",
                 "Libellé de pièce": e["libelle"],
                 "Numéro de pièce": numero,
