@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import re
+import zipfile
 from dataclasses import dataclass, field
 from datetime import date, datetime
 
@@ -244,18 +245,26 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
 
 
 def controler_pieces(df: pd.DataFrame) -> list[str]:
-    """Contrôles avant import Pennylane : un n° de pièce = un seul journal (erreur
-    MULTIPLE_JOURNAL_CODE de Pennylane) ; plusieurs dates dans une pièce sont signalées."""
-    alertes = []
-    controles = (
-        ("Code Journal", "plusieurs journaux pour un même n° de pièce (refusé par Pennylane)"),
-        ("Date", "plusieurs dates pour un même n° de pièce, à vérifier"),
-    )
-    for colonne, message in controles:
-        valeurs = df.groupby("Numéro de pièce")[colonne].nunique()
-        for numero in valeurs[valeurs > 1].index:
-            alertes.append(f"Pièce {numero} : {message}")
-    return alertes
+    """Contrôle avant import Pennylane (un fichier par journal) : une pièce sur plusieurs
+    dates au sein d'un même journal est signalée."""
+    dates = df.groupby(["Code Journal", "Numéro de pièce"])["Date"].nunique()
+    return [
+        f"Pièce {numero} (journal {journal}) : plusieurs dates pour un même n° de pièce, à vérifier"
+        for journal, numero in dates[dates > 1].index
+    ]
+
+
+def par_journal(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
+    """Écritures séparées par code journal (un fichier d'import Pennylane par journal)."""
+    return {journal: lignes for journal, lignes in df.groupby("Code Journal", sort=True)}
+
+
+def vers_zip(fichiers: dict[str, bytes]) -> bytes:
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for nom, contenu in fichiers.items():
+            archive.writestr(nom, contenu)
+    return buffer.getvalue()
 
 
 def vers_excel(df: pd.DataFrame) -> bytes:

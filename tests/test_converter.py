@@ -71,7 +71,7 @@ def test_conversion():
     assert df.iloc[6]["Libellé de ligne"] == "9999"
     assert r.alertes == [
         "Code client 9999 absent du fichier clients (le code est utilisé comme libellé)",
-        "Pièce SAGE-2607-003 : plusieurs dates pour un même n° de pièce, à vérifier",
+        "Pièce SAGE-2607-003 (journal SAGE) : plusieurs dates pour un même n° de pièce, à vérifier",
     ]
     caisse = df.iloc[8]
     assert (caisse["Code Journal"], caisse["Numéro de compte"]) == ("SAGE", "531000000")

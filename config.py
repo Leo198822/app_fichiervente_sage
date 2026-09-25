@@ -72,11 +72,6 @@ SEPTEO_JOURNAUX = {
     # BQ : inchangé
 }
 
-# Journaux dont le n° de pièce Septeo est conservé tel quel ; pour les autres, il est
-# préfixé par le code journal (ex. "BQ-261587") car Septeo réutilise le n° de la facture
-# pour son règlement, alors que Pennylane exige un n° de pièce par écriture.
-SEPTEO_JOURNAUX_NUMERO_INCHANGE = ("VT",)
-
 # Longueur des numéros de compte Septeo (complétés par des 0 à droite)
 SEPTEO_LONGUEUR_COMPTE = 10
 

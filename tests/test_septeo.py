@@ -1,9 +1,11 @@
 import io
+import zipfile
 from datetime import datetime
 
 from openpyxl import Workbook
 
 import septeo
+from converter import par_journal, vers_excel, vers_zip
 
 LIGNES = [
     ["Journal", "Date", "Pièce", "Compte", "Libellé", "Débit", "Crédit"],
@@ -70,19 +72,28 @@ def test_format_reel_csv():
     ).encode("utf-8")
     r = septeo.convertir(csv, "ExportEcrituresComptable.csv")
     df = r.ecritures
-    assert r.alertes == []
+    # deux règlements de la même facture à des dates différentes : signalé, n° conservé
+    assert r.alertes == ["Pièce 261587 (journal BQ) : plusieurs dates pour un même n° de pièce, à vérifier"]
     assert r.nb_pieces == 6
     # débours 46711 inclus dans la base HT, mais sans taux affiché (refusé par Pennylane)
     assert list(df.iloc[0:4]["Taux de TVA du compte"]) == ["20\u00a0%", "", "", ""]
     assert df.iloc[4]["Numéro de compte"] == "4110007906"
-    # n° de pièce uniques : facture 261587, puis ses deux règlements en banque
-    assert df.iloc[0]["Numéro de pièce"] == "261587"
-    assert list(df.iloc[5:9]["Numéro de pièce"]) == ["BQ-261587"] * 2 + ["BQ-261587-2"] * 2
+    # n° de pièce conservé tel quel, en vente comme en banque
+    assert set(df.iloc[0:9]["Numéro de pièce"]) == {"261587"}
     assert list(df.iloc[9:13]["Numéro de pièce"]) == ["HA-2607-001"] * 2 + ["HA-2607-002"] * 2
     assert df.iloc[9]["Libellé de compte"] == "DROIT DE PLAIDOIRIE - CNBF"
     assert df.iloc[13]["Code Journal"] == "VT"
     assert df.iloc[0]["Numéro de compte"] == "7060100000"
     assert df.iloc[13]["Libellé de compte"] == "SCI ARNAUD"
+
+
+def test_un_fichier_par_journal():
+    df = septeo.convertir(excel(LIGNES), "export.xlsx").ecritures
+    fichiers = par_journal(df)
+    assert list(fichiers) == ["BQ", "HA", "VT"]
+    assert [len(f) for f in fichiers.values()] == [2, 3, 3]
+    archive = zipfile.ZipFile(io.BytesIO(vers_zip({f"{j}.xlsx": vers_excel(f) for j, f in fichiers.items()})))
+    assert archive.namelist() == ["BQ.xlsx", "HA.xlsx", "VT.xlsx"]
 
 
 def test_conversion_csv_et_alertes():

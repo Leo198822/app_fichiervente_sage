@@ -9,7 +9,8 @@ d'import d'écritures au format Pennylane (`.xlsx`).
 2. Déposer les fichiers demandés :
    - Sage : l'export des **écritures** (`.pnm` / `.txt`) et l'export des **clients** (`.pnc` / `.txt`) ;
    - Septeo : l'export des **écritures** (`.xlsx` / `.csv` / `.txt`).
-3. Vérifier les totaux et les éventuelles alertes, puis cliquer sur **Télécharger le fichier Pennylane**.
+3. Vérifier les totaux et les éventuelles alertes, puis télécharger les fichiers Pennylane :
+   **un fichier par code journal** (bouton par journal, ou tous les fichiers dans un `.zip`).
 
 ## Règles de conversion Sage
 
@@ -57,10 +58,8 @@ F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
 - **Libellé de ligne** et **libellé de pièce** : libellé de l'écriture.
 - **Pièces** : lignes de même journal, n° de pièce (colonne C) et date. Sans n° de pièce (journal AC),
   lignes consécutives regroupées jusqu'à équilibre, avec un numéro généré `HA-AAMM-nnn`.
-- **Numéro de pièce** : Pennylane exige un numéro par écriture (erreur `MULTIPLE_JOURNAL_CODE` sinon),
-  alors que Septeo réutilise le n° de la facture pour son règlement. Les ventes gardent le n° Septeo
-  (`261587`) ; les autres journaux sont préfixés (`BQ-261587`), avec `-2`, `-3`… pour plusieurs
-  règlements d'une même facture.
+- **Numéro de pièce** : conservé tel quel. Septeo réutilise le n° de la facture pour son règlement
+  en banque : comme chaque journal a son propre fichier, Pennylane n'y voit pas de conflit.
 - **Taux de TVA** : TVA (`4456` / `4457`) ÷ base HT (comptes 6, 7 et débours soumis à TVA `46711…`),
   indiqué uniquement sur les comptes 6 et 7 (Pennylane refuse un taux sur les comptes 467).
 

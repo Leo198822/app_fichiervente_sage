@@ -6,7 +6,7 @@ import streamlit as st
 
 import config
 import septeo
-from converter import Resultat, convertir, vers_excel
+from converter import Resultat, convertir, par_journal, vers_excel, vers_zip
 
 st.set_page_config(page_title="Import Pennylane", page_icon="📒", layout="wide")
 
@@ -34,11 +34,27 @@ def afficher_resultat(resultat: Resultat, nom_source: str) -> None:
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
-    st.download_button(
-        "📥 Télécharger le fichier Pennylane",
-        data=vers_excel(df),
-        file_name=f"pennylane_{Path(nom_source).stem}.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    # Un fichier d'import Pennylane par code journal
+    st.subheader("Fichiers Pennylane (un par journal)")
+    stem = Path(nom_source).stem
+    fichiers = {
+        f"pennylane_{stem}_{journal}.xlsx": (journal, len(lignes), vers_excel(lignes))
+        for journal, lignes in par_journal(df).items()
+    }
+    colonnes = st.columns(len(fichiers) + 1)
+    for colonne, (nom, (journal, nb, contenu)) in zip(colonnes, fichiers.items()):
+        colonne.download_button(
+            f"📥 {journal} ({nb} lignes)",
+            data=contenu,
+            file_name=nom,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            key=nom,
+        )
+    colonnes[-1].download_button(
+        "📦 Tout télécharger (.zip)",
+        data=vers_zip({nom: contenu for nom, (_, _, contenu) in fichiers.items()}),
+        file_name=f"pennylane_{stem}.zip",
+        mime="application/zip",
         type="primary",
     )
 
