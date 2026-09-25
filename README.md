@@ -1,15 +1,17 @@
-# Conversion Sage → Pennylane
+# Conversion → Pennylane
 
-Application Streamlit qui transforme les exports Sage (écritures + clients) en fichier
+Application Streamlit qui transforme des exports comptables en fichier
 d'import d'écritures au format Pennylane (`.xlsx`).
 
 ## Utilisation
 
-1. Déposer l'export des **écritures** Sage (`.pnm`, `.txt`…).
-2. Déposer l'export des **clients** Sage (`.pnc`, `.txt`…).
+1. Choisir le **type d'import** en haut de la page : `Import fichier Sage` ou `Import fichier Septeo`
+   (Septeo : en cours de paramétrage).
+2. Déposer les fichiers demandés (pour Sage : l'export des **écritures** `.pnm` / `.txt`
+   et l'export des **clients** `.pnc` / `.txt`).
 3. Vérifier les totaux et les éventuelles alertes, puis cliquer sur **Télécharger le fichier Pennylane**.
 
-## Règles de conversion
+## Règles de conversion Sage
 
 Toutes les règles sont dans [`config.py`](config.py) :
 
