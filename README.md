@@ -57,6 +57,10 @@ F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
 - **Libellé de ligne** et **libellé de pièce** : libellé de l'écriture.
 - **Pièces** : lignes de même journal, n° de pièce (colonne C) et date. Sans n° de pièce (journal AC),
   lignes consécutives regroupées jusqu'à équilibre, avec un numéro généré `HA-AAMM-nnn`.
+- **Numéro de pièce** : Pennylane exige un numéro par écriture (erreur `MULTIPLE_JOURNAL_CODE` sinon),
+  alors que Septeo réutilise le n° de la facture pour son règlement. Les ventes gardent le n° Septeo
+  (`261587`) ; les autres journaux sont préfixés (`BQ-261587`), avec `-2`, `-3`… pour plusieurs
+  règlements d'une même facture.
 - **Taux de TVA** : TVA (`4456` / `4457`) ÷ base HT (comptes 6, 7 et débours soumis à TVA `46711…`),
   indiqué uniquement sur les comptes 6 et 7 (Pennylane refuse un taux sur les comptes 467).
 

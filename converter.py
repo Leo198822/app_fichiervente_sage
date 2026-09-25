@@ -239,7 +239,23 @@ def convertir(contenu_ecritures: bytes | str, contenu_clients: bytes | str) -> R
         alertes.append(f"Code client {code} absent du fichier clients (le code est utilisé comme libellé)")
 
     df = pd.DataFrame(lignes, columns=COLONNES_PENNYLANE)
+    alertes += controler_pieces(df)
     return Resultat(ecritures=df, alertes=alertes, nb_pieces=len(pieces))
+
+
+def controler_pieces(df: pd.DataFrame) -> list[str]:
+    """Contrôles avant import Pennylane : un n° de pièce = un seul journal (erreur
+    MULTIPLE_JOURNAL_CODE de Pennylane) ; plusieurs dates dans une pièce sont signalées."""
+    alertes = []
+    controles = (
+        ("Code Journal", "plusieurs journaux pour un même n° de pièce (refusé par Pennylane)"),
+        ("Date", "plusieurs dates pour un même n° de pièce, à vérifier"),
+    )
+    for colonne, message in controles:
+        valeurs = df.groupby("Numéro de pièce")[colonne].nunique()
+        for numero in valeurs[valeurs > 1].index:
+            alertes.append(f"Pièce {numero} : {message}")
+    return alertes
 
 
 def vers_excel(df: pd.DataFrame) -> bytes:

@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 import config
-from converter import COLONNES_PENNYLANE, Resultat, _par_prefixe, taux_tva
+from converter import COLONNES_PENNYLANE, Resultat, _par_prefixe, controler_pieces, taux_tva
 
 
 def _texte(valeur) -> str:
@@ -116,6 +116,7 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
 
     pieces = _regrouper(ecritures)
     compteurs: dict[str, int] = {}
+    numeros_utilises: set[str] = set()
     lignes = []
     for piece in pieces:
         journal_septeo = piece[0]["journal"]
@@ -125,6 +126,14 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
             cle = f"{journal}-{piece[0]['date']:%y%m}"
             compteurs[cle] = compteurs.get(cle, 0) + 1
             numero = f"{cle}-{compteurs[cle]:03d}"
+        elif journal not in config.SEPTEO_JOURNAUX_NUMERO_INCHANGE:
+            numero = f"{journal}-{numero}"
+        # un n° de pièce Pennylane = une seule écriture (ex. plusieurs règlements d'une facture)
+        base, n = numero, 1
+        while numero in numeros_utilises:
+            n += 1
+            numero = f"{base}-{n}"
+        numeros_utilises.add(numero)
         debit = sum(e["debit"] for e in piece)
         credit = sum(e["credit"] for e in piece)
         if abs(debit - credit) >= 0.005:
@@ -159,4 +168,5 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
             })
 
     df = pd.DataFrame(lignes, columns=COLONNES_PENNYLANE)
+    alertes += controler_pieces(df)
     return Resultat(ecritures=df, alertes=alertes, nb_pieces=len(pieces))

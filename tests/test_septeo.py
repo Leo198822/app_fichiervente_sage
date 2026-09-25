@@ -75,6 +75,9 @@ def test_format_reel_csv():
     # débours 46711 inclus dans la base HT, mais sans taux affiché (refusé par Pennylane)
     assert list(df.iloc[0:4]["Taux de TVA du compte"]) == ["20\u00a0%", "", "", ""]
     assert df.iloc[4]["Numéro de compte"] == "4110007906"
+    # n° de pièce uniques : facture 261587, puis ses deux règlements en banque
+    assert df.iloc[0]["Numéro de pièce"] == "261587"
+    assert list(df.iloc[5:9]["Numéro de pièce"]) == ["BQ-261587"] * 2 + ["BQ-261587-2"] * 2
     assert list(df.iloc[9:13]["Numéro de pièce"]) == ["HA-2607-001"] * 2 + ["HA-2607-002"] * 2
     assert df.iloc[9]["Libellé de compte"] == "DROIT DE PLAIDOIRIE - CNBF"
     assert df.iloc[13]["Code Journal"] == "VT"
