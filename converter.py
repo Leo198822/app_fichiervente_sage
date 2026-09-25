@@ -130,10 +130,14 @@ def _signe(e: dict[str, str]) -> float:
     return _montant(e["montant"]) * (1 if e["sens"] == "C" else -1)
 
 
-def taux_tva(piece: list[dict[str, str]], comptes_tva: tuple[str, ...] = config.COMPTES_TVA_COLLECTEE) -> tuple[str, bool]:
+def taux_tva(
+    piece: list[dict[str, str]],
+    comptes_tva: tuple[str, ...] = config.COMPTES_TVA_COLLECTEE,
+    comptes_ht: tuple[str, ...] = config.COMPTES_SOUMIS_TVA,
+) -> tuple[str, bool]:
     """Taux de TVA de la pièce (ex. "20 %", "pas de TVA") et indicateur de taux incohérent."""
     tva = sum(_signe(e) for e in piece if e["compte"].startswith(comptes_tva))
-    ht = sum(_signe(e) for e in piece if e["compte"].startswith(config.COMPTES_SOUMIS_TVA))
+    ht = sum(_signe(e) for e in piece if e["compte"].startswith(comptes_ht))
     if abs(tva) < 0.005:
         return config.LIBELLE_SANS_TVA, False
     if abs(ht) < 0.005:

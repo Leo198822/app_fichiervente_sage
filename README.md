@@ -46,15 +46,18 @@ F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
 |---|---|
 | Journal `VE` | `VT` |
 | Journal `AC` | `HA` |
-| Journal `BQ` et autres | inchangés |
-| Comptes commençant par `411` | inchangés |
-| Autres comptes (`706`) | complétés à 9 caractères (`706000000`) |
+| Journaux `BQ`, `ACH` et autres | inchangés |
+| Comptes commençant par `411` | inchangés (`4110004465`) |
+| Autres comptes (`70601000`) | complétés à 9 caractères (`706010000`) |
 
-- **Libellé de compte** : libellé de l'écriture sans ses 7 premiers caractères
-  (utilisé par Pennylane si le compte n'existe pas encore).
+- **Libellé de compte** : libellé de l'écriture sans ses 7 premiers caractères quand ils forment
+  un code dossier (`220205 MARC JOEL` → `MARC JOEL`, `S150125 VILLE DE PLERIN` → `VILLE DE PLERIN`) ;
+  libellé complet sinon (`DROIT DE PLAIDOIRIE - CNBF`).
 - **Libellé de ligne** et **libellé de pièce** : libellé de l'écriture.
-- **Numéro de pièce** : colonne C ; les lignes sont regroupées par journal + pièce.
-- **Taux de TVA** : même calcul que pour Sage (TVA collectée `4457` ou déductible `4456`).
+- **Pièces** : lignes de même journal, n° de pièce (colonne C) et date. Sans n° de pièce (journal AC),
+  lignes consécutives regroupées jusqu'à équilibre, avec un numéro généré `HA-AAMM-nnn`.
+- **Taux de TVA** : TVA (`4456` / `4457`) ÷ base HT (comptes 6, 7 et débours soumis à TVA `46711…`),
+  indiqué sur les lignes de la base HT.
 
 ## Lancer en local
 

@@ -64,18 +64,22 @@ LIBELLE_SANS_TVA = "pas de TVA"
 # Colonnes du fichier Septeo (A = 1re colonne)
 SEPTEO_COLONNES = ["journal", "date", "piece", "compte", "libelle", "debit", "credit"]
 
-# Remplacement des codes journaux (préfixe du code Septeo -> code Pennylane)
+# Remplacement des codes journaux (code Septeo exact -> code Pennylane)
 SEPTEO_JOURNAUX = {
     "VE": "VT",
     "AC": "HA",
-    # BQ : inchangé
+    # BQ, ACH : inchangés
 }
 
 # Comptes commençant par ces préfixes : conservés tels quels (pas de mise à 9 caractères)
 SEPTEO_COMPTES_INCHANGES = ("411",)
 
-# Libellé de compte = libellé de l'écriture sans ses N premiers caractères
+# Libellé de compte = libellé de l'écriture sans ses N premiers caractères,
+# uniquement quand ils forment un code dossier (ex. "220205 " ou "S150125")
 SEPTEO_CARACTERES_A_RETIRER = 7
+SEPTEO_CODE_DOSSIER = r"^[A-Z]?\d{6}\s*"
 
 # TVA collectée (ventes) et déductible (achats) pour le calcul du taux
 SEPTEO_COMPTES_TVA = ("4456", "4457")
+# Comptes formant la base HT : produits, charges et débours soumis à TVA (46711…)
+SEPTEO_COMPTES_SOUMIS_TVA = ("6", "7", "46711")

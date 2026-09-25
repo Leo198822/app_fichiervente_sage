@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import re
 from datetime import date
 from pathlib import Path
 
@@ -56,6 +57,31 @@ def lire_fichier(contenu: bytes, nom: str) -> pd.DataFrame:
     return df
 
 
+def libelle_compte(libelle: str) -> str:
+    """Libellé sans le code dossier en tête (7 caractères) ; inchangé s'il n'y en a pas."""
+    if re.match(config.SEPTEO_CODE_DOSSIER, libelle):
+        return libelle[config.SEPTEO_CARACTERES_A_RETIRER:].strip()
+    return libelle
+
+
+def _regrouper(ecritures: list[dict]) -> list[list[dict]]:
+    """Pièces : même journal + n° de pièce + date ; sans n° de pièce, lignes consécutives
+    du même journal jusqu'à équilibre débit = crédit."""
+    pieces: dict[tuple, list[dict]] = {}
+    courante, solde = None, 0.0
+    for i, e in enumerate(ecritures):
+        if e["piece"]:
+            pieces.setdefault((e["journal"], e["piece"], e["date"]), []).append(e)
+            continue
+        if courante is None or courante[0] != e["journal"]:
+            courante, solde = (e["journal"], "", i), 0.0
+        pieces.setdefault(courante, []).append(e)
+        solde += e["debit"] - e["credit"]
+        if abs(solde) < 0.005:
+            courante = None
+    return list(pieces.values())
+
+
 def convertir_compte(compte: str) -> str:
     if compte.startswith(config.SEPTEO_COMPTES_INCHANGES):
         return compte
@@ -88,20 +114,25 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
             "credit": credit,
         })
 
-    pieces: dict[tuple[str, str], list[dict]] = {}
-    for e in ecritures:
-        pieces.setdefault((e["journal"], e["piece"]), []).append(e)
-
+    pieces = _regrouper(ecritures)
+    compteurs: dict[str, int] = {}
     lignes = []
-    for (journal_septeo, numero), piece in pieces.items():
-        journal = _par_prefixe(journal_septeo, config.SEPTEO_JOURNAUX) or journal_septeo
+    for piece in pieces:
+        journal_septeo = piece[0]["journal"]
+        journal = config.SEPTEO_JOURNAUX.get(journal_septeo, journal_septeo)
+        numero = piece[0]["piece"]
+        if not numero:
+            cle = f"{journal}-{piece[0]['date']:%y%m}"
+            compteurs[cle] = compteurs.get(cle, 0) + 1
+            numero = f"{cle}-{compteurs[cle]:03d}"
         debit = sum(e["debit"] for e in piece)
         credit = sum(e["credit"] for e in piece)
         if abs(debit - credit) >= 0.005:
             alertes.append(
-                f"Pièce {numero} (journal {journal_septeo}) déséquilibrée : débit {debit:.2f} / crédit {credit:.2f}"
+                f"Pièce {numero} (journal {journal_septeo} du {piece[0]['date']:%d/%m/%Y}) déséquilibrée : "
+                f"débit {debit:.2f} / crédit {credit:.2f}"
             )
-        taux, taux_incoherent = taux_tva(piece, config.SEPTEO_COMPTES_TVA)
+        taux, taux_incoherent = taux_tva(piece, config.SEPTEO_COMPTES_TVA, config.SEPTEO_COMPTES_SOUMIS_TVA)
         if taux_incoherent:
             alertes.append(f"Pièce {numero} : taux de TVA incohérent ({taux or 'HT nul'}), à vérifier")
 
@@ -113,9 +144,9 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
                 "Date": e["date"],
                 "Code Journal": journal,
                 "Numéro de compte": compte,
-                "Libellé de compte": e["libelle"][config.SEPTEO_CARACTERES_A_RETIRER:].strip(),
+                "Libellé de compte": libelle_compte(e["libelle"]),
                 "Libellé de ligne": e["libelle"],
-                "Taux de TVA du compte": taux if e["compte"].startswith(config.COMPTES_SOUMIS_TVA) else "",
+                "Taux de TVA du compte": taux if e["compte"].startswith(config.SEPTEO_COMPTES_SOUMIS_TVA) else "",
                 "Code pays du compte": "",
                 "Libellé de pièce": e["libelle"],
                 "Numéro de pièce": numero,

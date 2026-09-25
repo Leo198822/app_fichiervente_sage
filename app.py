@@ -84,11 +84,13 @@ def page_septeo() -> None:
     with st.sidebar:
         st.header("Règles appliquées")
         st.markdown(
-            "".join(f"- Journal `{k}…` → `{v}`\n" for k, v in config.SEPTEO_JOURNAUX.items())
+            "".join(f"- Journal `{k}` → `{v}`\n" for k, v in config.SEPTEO_JOURNAUX.items())
             + "- Autres journaux inchangés\n"
             + f"- Comptes complétés à {config.LONGUEUR_COMPTE} caractères, "
             + "sauf " + ", ".join(f"`{p}…`" for p in config.SEPTEO_COMPTES_INCHANGES) + " (inchangés)\n"
-            + f"- Libellé de compte = libellé sans les {config.SEPTEO_CARACTERES_A_RETIRER} premiers caractères\n"
+            + f"- Libellé de compte = libellé sans les {config.SEPTEO_CARACTERES_A_RETIRER} premiers caractères "
+            + "(code dossier)\n"
+            + "- Sans n° de pièce : numéro généré (`HA-AAMM-nnn`)\n"
         )
         st.caption("Ces règles se modifient dans le fichier `config.py`.")
 
