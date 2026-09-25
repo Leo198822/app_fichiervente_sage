@@ -85,7 +85,7 @@ def _regrouper(ecritures: list[dict]) -> list[list[dict]]:
 def convertir_compte(compte: str) -> str:
     if compte.startswith(config.SEPTEO_COMPTES_INCHANGES):
         return compte
-    return compte.ljust(config.LONGUEUR_COMPTE or 0, "0")
+    return compte.ljust(config.SEPTEO_LONGUEUR_COMPTE or 0, "0")
 
 
 def convertir(contenu: bytes, nom: str) -> Resultat:
@@ -138,8 +138,8 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
 
         for e in piece:
             compte = convertir_compte(e["compte"])
-            if len(compte) > (config.LONGUEUR_COMPTE or len(compte)) and not compte.startswith(config.SEPTEO_COMPTES_INCHANGES):
-                alertes.append(f"Compte {compte} (pièce {numero}) : plus de {config.LONGUEUR_COMPTE} caractères")
+            if len(compte) > (config.SEPTEO_LONGUEUR_COMPTE or len(compte)) and not compte.startswith(config.SEPTEO_COMPTES_INCHANGES):
+                alertes.append(f"Compte {compte} (pièce {numero}) : plus de {config.SEPTEO_LONGUEUR_COMPTE} caractères")
             lignes.append({
                 "Date": e["date"],
                 "Code Journal": journal,

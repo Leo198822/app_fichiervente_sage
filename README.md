@@ -46,9 +46,10 @@ F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
 |---|---|
 | Journal `VE` | `VT` |
 | Journal `AC` | `HA` |
-| Journaux `BQ`, `ACH` et autres | inchangés |
+| Journal `ACH` (ventes) | `VT` |
+| Journal `BQ` et autres | inchangés |
 | Comptes commençant par `411` | inchangés (`4110004465`) |
-| Autres comptes (`70601000`) | complétés à 9 caractères (`706010000`) |
+| Autres comptes (`70601000`) | complétés à 10 caractères (`7060100000`) |
 
 - **Libellé de compte** : libellé de l'écriture sans ses 7 premiers caractères quand ils forment
   un code dossier (`220205 MARC JOEL` → `MARC JOEL`, `S150125 VILLE DE PLERIN` → `VILLE DE PLERIN`) ;

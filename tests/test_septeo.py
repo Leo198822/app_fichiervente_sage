@@ -34,7 +34,7 @@ def test_conversion_excel():
     assert len(df) == 8 and r.nb_pieces == 3
     assert list(df["Code Journal"].unique()) == ["VT", "HA", "BQ"]
     assert list(df["Numéro de compte"]) == [
-        "411DUPONT", "445710000", "706000000", "401FOUR00", "445660000", "606400000", "512000000", "411DUPONT",
+        "411DUPONT", "4457100000", "7060000000", "401FOUR000", "4456600000", "6064000000", "5120000000", "411DUPONT",
     ]
     assert df.iloc[0]["Libellé de compte"] == "DUPONT SARL"
     assert df.iloc[0]["Libellé de ligne"] == df.iloc[0]["Libellé de pièce"] == "220205 DUPONT SARL"
@@ -76,7 +76,8 @@ def test_format_reel_csv():
     assert df.iloc[4]["Numéro de compte"] == "4110007906"
     assert list(df.iloc[9:13]["Numéro de pièce"]) == ["HA-2607-001"] * 2 + ["HA-2607-002"] * 2
     assert df.iloc[9]["Libellé de compte"] == "DROIT DE PLAIDOIRIE - CNBF"
-    assert df.iloc[13]["Code Journal"] == "ACH"
+    assert df.iloc[13]["Code Journal"] == "VT"
+    assert df.iloc[0]["Numéro de compte"] == "7060100000"
     assert df.iloc[13]["Libellé de compte"] == "SCI ARNAUD"
 
 

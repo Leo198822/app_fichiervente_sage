@@ -68,10 +68,14 @@ SEPTEO_COLONNES = ["journal", "date", "piece", "compte", "libelle", "debit", "cr
 SEPTEO_JOURNAUX = {
     "VE": "VT",
     "AC": "HA",
-    # BQ, ACH : inchangés
+    "ACH": "VT",  # ventes saisies par erreur dans ACH
+    # BQ : inchangé
 }
 
-# Comptes commençant par ces préfixes : conservés tels quels (pas de mise à 9 caractères)
+# Longueur des numéros de compte Septeo (complétés par des 0 à droite)
+SEPTEO_LONGUEUR_COMPTE = 10
+
+# Comptes commençant par ces préfixes : conservés tels quels (pas de mise à longueur)
 SEPTEO_COMPTES_INCHANGES = ("411",)
 
 # Libellé de compte = libellé de l'écriture sans ses N premiers caractères,

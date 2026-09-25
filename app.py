@@ -86,7 +86,7 @@ def page_septeo() -> None:
         st.markdown(
             "".join(f"- Journal `{k}` → `{v}`\n" for k, v in config.SEPTEO_JOURNAUX.items())
             + "- Autres journaux inchangés\n"
-            + f"- Comptes complétés à {config.LONGUEUR_COMPTE} caractères, "
+            + f"- Comptes complétés à {config.SEPTEO_LONGUEUR_COMPTE} caractères, "
             + "sauf " + ", ".join(f"`{p}…`" for p in config.SEPTEO_COMPTES_INCHANGES) + " (inchangés)\n"
             + f"- Libellé de compte = libellé sans les {config.SEPTEO_CARACTERES_A_RETIRER} premiers caractères "
             + "(code dossier)\n"
