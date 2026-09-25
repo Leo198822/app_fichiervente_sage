@@ -5,10 +5,10 @@ d'import d'écritures au format Pennylane (`.xlsx`).
 
 ## Utilisation
 
-1. Choisir le **type d'import** en haut de la page : `Import fichier Sage` ou `Import fichier Septeo`
-   (Septeo : en cours de paramétrage).
-2. Déposer les fichiers demandés (pour Sage : l'export des **écritures** `.pnm` / `.txt`
-   et l'export des **clients** `.pnc` / `.txt`).
+1. Choisir le **type d'import** en haut de la page : `Import fichier Sage` ou `Import fichier Septeo`.
+2. Déposer les fichiers demandés :
+   - Sage : l'export des **écritures** (`.pnm` / `.txt`) et l'export des **clients** (`.pnc` / `.txt`) ;
+   - Septeo : l'export des **écritures** (`.xlsx` / `.csv` / `.txt`).
 3. Vérifier les totaux et les éventuelles alertes, puis cliquer sur **Télécharger le fichier Pennylane**.
 
 ## Règles de conversion Sage
@@ -36,6 +36,25 @@ Toutes les règles sont dans [`config.py`](config.py) :
 - **Numéro de pièce** : numéro de facture (`FA…` / `FR…`) quand il figure dans le libellé,
   sinon `JOURNAL-AAMM-nnn`. Les lignes d'une pièce sont regroupées jusqu'à équilibre débit = crédit.
 - L'application signale les pièces déséquilibrées et les codes clients introuvables.
+
+## Règles de conversion Septeo
+
+Colonnes du fichier Septeo : A = journal, B = date, C = pièce, D = compte, E = libellé,
+F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
+
+| Septeo | Pennylane |
+|---|---|
+| Journal `VE` | `VT` |
+| Journal `AC` | `HA` |
+| Journal `BQ` et autres | inchangés |
+| Comptes commençant par `411` | inchangés |
+| Autres comptes (`706`) | complétés à 9 caractères (`706000000`) |
+
+- **Libellé de compte** : libellé de l'écriture sans ses 7 premiers caractères
+  (utilisé par Pennylane si le compte n'existe pas encore).
+- **Libellé de ligne** et **libellé de pièce** : libellé de l'écriture.
+- **Numéro de pièce** : colonne C ; les lignes sont regroupées par journal + pièce.
+- **Taux de TVA** : même calcul que pour Sage (TVA collectée `4457` ou déductible `4456`).
 
 ## Lancer en local
 

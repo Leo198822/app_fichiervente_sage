@@ -55,3 +55,27 @@ TAUX_TVA = [20, 10, 5.5, 2.1]
 COMPTES_TVA_COLLECTEE = ("4457",)
 COMPTES_SOUMIS_TVA = ("6", "7")
 LIBELLE_SANS_TVA = "pas de TVA"
+
+
+# ---------------------------------------------------------------------------
+# Import Septeo
+# ---------------------------------------------------------------------------
+
+# Colonnes du fichier Septeo (A = 1re colonne)
+SEPTEO_COLONNES = ["journal", "date", "piece", "compte", "libelle", "debit", "credit"]
+
+# Remplacement des codes journaux (préfixe du code Septeo -> code Pennylane)
+SEPTEO_JOURNAUX = {
+    "VE": "VT",
+    "AC": "HA",
+    # BQ : inchangé
+}
+
+# Comptes commençant par ces préfixes : conservés tels quels (pas de mise à 9 caractères)
+SEPTEO_COMPTES_INCHANGES = ("411",)
+
+# Libellé de compte = libellé de l'écriture sans ses N premiers caractères
+SEPTEO_CARACTERES_A_RETIRER = 7
+
+# TVA collectée (ventes) et déductible (achats) pour le calcul du taux
+SEPTEO_COMPTES_TVA = ("4456", "4457")

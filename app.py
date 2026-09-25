@@ -5,6 +5,7 @@ from pathlib import Path
 import streamlit as st
 
 import config
+import septeo
 from converter import Resultat, convertir, vers_excel
 
 st.set_page_config(page_title="Import Pennylane", page_icon="📒", layout="wide")
@@ -29,7 +30,7 @@ def afficher_resultat(resultat: Resultat, nom_source: str) -> None:
             for alerte in resultat.alertes:
                 st.warning(alerte)
     else:
-        st.success("Toutes les pièces sont équilibrées et tous les clients ont été trouvés.")
+        st.success("Aucune anomalie détectée : toutes les pièces sont équilibrées.")
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
@@ -75,7 +76,32 @@ def page_sage() -> None:
 
 
 def page_septeo() -> None:
-    st.info("L'import des fichiers Septeo est en cours de paramétrage et sera bientôt disponible.")
+    st.write(
+        "Déposez l'export des écritures Septeo (Excel ou CSV) : colonnes A à G = journal, date, "
+        "pièce, compte, libellé, débit, crédit. L'application génère le fichier d'import Pennylane."
+    )
+
+    with st.sidebar:
+        st.header("Règles appliquées")
+        st.markdown(
+            "".join(f"- Journal `{k}…` → `{v}`\n" for k, v in config.SEPTEO_JOURNAUX.items())
+            + "- Autres journaux inchangés\n"
+            + f"- Comptes complétés à {config.LONGUEUR_COMPTE} caractères, "
+            + "sauf " + ", ".join(f"`{p}…`" for p in config.SEPTEO_COMPTES_INCHANGES) + " (inchangés)\n"
+            + f"- Libellé de compte = libellé sans les {config.SEPTEO_CARACTERES_A_RETIRER} premiers caractères\n"
+        )
+        st.caption("Ces règles se modifient dans le fichier `config.py`.")
+
+    fichier = st.file_uploader("Fichier des écritures Septeo (.xlsx / .csv / .txt)")
+    if not fichier:
+        st.info("En attente du fichier.")
+        return
+    try:
+        resultat = septeo.convertir(fichier.getvalue(), fichier.name)
+    except Exception as erreur:  # fichier inattendu : message lisible plutôt qu'une trace
+        st.error(f"Impossible de lire le fichier : {erreur}.")
+        return
+    afficher_resultat(resultat, fichier.name)
 
 
 st.title("Conversion des écritures → Pennylane")
