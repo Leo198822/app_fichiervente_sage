@@ -96,6 +96,31 @@ def test_un_fichier_par_journal():
     assert archive.namelist() == ["BQ.xlsx", "HA.xlsx", "VT.xlsx"]
 
 
+def test_ventes_triees_par_numero_de_piece():
+    csv = (
+        # export Septeo trié par date : les n° de pièce ne se suivent pas
+        "VE;17/07/2026;261575;70601000;230677 CIMEO;0,00;100,00\n"
+        "VE;17/07/2026;261575;4110000001;230677 CIMEO;100,00;0,00\n"
+        "VE;18/07/2026;261571;70601000;220205 DUPONT;0,00;50,00\n"
+        "VE;18/07/2026;261571;4110000002;220205 DUPONT;50,00;0,00\n"
+        "VE;19/07/2026;261573;70601000;220205 DUPONT;0,00;20,00\n"
+        "VE;19/07/2026;261573;4110000002;220205 DUPONT;20,00;0,00\n"
+        "BQ;20/07/2026;261575;58200000;230677 CIMEO;100,00;0,00\n"
+        "BQ;20/07/2026;261575;4110000001;230677 CIMEO;0,00;100,00\n"
+        "BQ;21/07/2026;261571;58200000;220205 DUPONT;50,00;0,00\n"
+        "BQ;21/07/2026;261571;4110000002;220205 DUPONT;0,00;50,00\n"
+    ).encode("utf-8")
+    r = septeo.convertir(csv, "export.csv")
+    fichiers = par_journal(r.ecritures)
+    ventes = fichiers["VT"]
+    assert list(ventes["Numéro de pièce"]) == ["261571"] * 2 + ["261573"] * 2 + ["261575"] * 2
+    # lignes d'une pièce dans leur ordre d'origine
+    assert list(ventes["Numéro de compte"][:2]) == ["7060100000", "4110000002"]
+    # la banque garde l'ordre de l'export (chronologique)
+    assert list(fichiers["BQ"]["Numéro de pièce"]) == ["261575"] * 2 + ["261571"] * 2
+    assert r.alertes == ["Journal VT : 2 n° de pièce absents de l'export entre 261571 et 261575 (261572, 261574)"]
+
+
 def test_conversion_csv_et_alertes():
     csv = (
         "VE;02/07/2026;F002;411X;F002 - Client;100,50;\n"

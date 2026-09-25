@@ -58,6 +58,9 @@ F = débit, G = crédit (une ligne d'en-tête éventuelle est ignorée).
 - **Libellé de ligne** et **libellé de pièce** : libellé de l'écriture.
 - **Pièces** : lignes de même journal, n° de pièce (colonne C) et date. Sans n° de pièce (journal AC),
   lignes consécutives regroupées jusqu'à équilibre, avec un numéro généré `HA-AAMM-nnn`.
+- **Ordre des ventes** : le fichier VT est trié par n° de pièce croissant (Pennylane exige que les
+  pièces se suivent ; l'export Septeo est trié par date). Les n° absents de la série sont signalés.
+  Les autres journaux gardent l'ordre de l'export.
 - **Numéro de pièce** : conservé tel quel. Septeo réutilise le n° de la facture pour son règlement
   en banque : comme chaque journal a son propre fichier, Pennylane n'y voit pas de conflit.
 - **Taux de TVA** : TVA (`4456` / `4457`) ÷ base HT (comptes 6, 7 et débours soumis à TVA `46711…`),

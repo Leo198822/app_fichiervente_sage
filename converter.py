@@ -254,9 +254,41 @@ def controler_pieces(df: pd.DataFrame) -> list[str]:
     ]
 
 
+def _cle_piece(numero: str) -> tuple:
+    """Tri naturel des n° de pièce : 000005 < 261559 < FA2600298 < FA2600299."""
+    return (0, int(numero), "") if numero.isdigit() else (1, 0, numero)
+
+
 def par_journal(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    """Écritures séparées par code journal (un fichier d'import Pennylane par journal)."""
-    return {journal: lignes for journal, lignes in df.groupby("Code Journal", sort=True)}
+    """Écritures séparées par code journal (un fichier d'import Pennylane par journal).
+    Les journaux de JOURNAUX_TRIES_PAR_PIECE sont triés par n° de pièce croissant ;
+    l'ordre des lignes à l'intérieur d'une pièce est conservé (tri stable)."""
+    fichiers = {}
+    for journal, lignes in df.groupby("Code Journal", sort=True):
+        if journal in config.JOURNAUX_TRIES_PAR_PIECE:
+            lignes = lignes.sort_values(
+                "Numéro de pièce", key=lambda col: col.map(_cle_piece), kind="stable"
+            )
+        fichiers[journal] = lignes
+    return fichiers
+
+
+def trous_numerotation(df: pd.DataFrame) -> list[str]:
+    """N° de pièce numériques manquants dans la série de chaque journal trié (information)."""
+    alertes = []
+    for journal in config.JOURNAUX_TRIES_PAR_PIECE:
+        numeros = sorted({int(n) for n in df.loc[df["Code Journal"] == journal, "Numéro de pièce"] if n.isdigit()})
+        # série principale : on ignore les numéros isolés très éloignés (ex. 000005)
+        serie = [n for n in numeros if numeros and n >= numeros[len(numeros) // 2] - 100_000]
+        if len(serie) > 1:
+            manquants = sorted(set(range(serie[0], serie[-1] + 1)) - set(serie))
+            if manquants:
+                apercu = ", ".join(map(str, manquants[:15])) + (" …" if len(manquants) > 15 else "")
+                alertes.append(
+                    f"Journal {journal} : {len(manquants)} n° de pièce absents de l'export "
+                    f"entre {serie[0]} et {serie[-1]} ({apercu})"
+                )
+    return alertes
 
 
 def vers_zip(fichiers: dict[str, bytes]) -> bytes:

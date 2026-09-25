@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 import config
-from converter import COLONNES_PENNYLANE, Resultat, _par_prefixe, controler_pieces, taux_tva
+from converter import COLONNES_PENNYLANE, Resultat, _par_prefixe, controler_pieces, taux_tva, trous_numerotation
 
 
 def _texte(valeur) -> str:
@@ -159,5 +159,5 @@ def convertir(contenu: bytes, nom: str) -> Resultat:
             })
 
     df = pd.DataFrame(lignes, columns=COLONNES_PENNYLANE)
-    alertes += controler_pieces(df)
+    alertes += controler_pieces(df) + trous_numerotation(df)
     return Resultat(ecritures=df, alertes=alertes, nb_pieces=len(pieces))

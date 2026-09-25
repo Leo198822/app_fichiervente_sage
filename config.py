@@ -51,6 +51,10 @@ LIBELLES_COMPTES = {
 
 # Taux de TVA : calculé pour chaque pièce (TVA collectée / montant HT) puis arrondi
 # au taux légal le plus proche. Il est indiqué sur les lignes de produits et de charges.
+# Journaux dont le fichier Pennylane est trié par n° de pièce croissant (les pièces
+# doivent se suivre à l'import des ventes) ; les autres gardent l'ordre de l'export.
+JOURNAUX_TRIES_PAR_PIECE = ("VT",)
+
 TAUX_TVA = [20, 10, 5.5, 2.1]
 COMPTES_TVA_COLLECTEE = ("4457",)
 COMPTES_SOUMIS_TVA = ("6", "7")
